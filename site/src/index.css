@@ -1,0 +1,106 @@
+@import "tailwindcss";
+
+/* NOTE: this must stay `@theme` (not `:root`) — Tailwind only generates
+   utilities like bg-cream / text-forest from tokens declared in @theme.
+   The editor's "unknown at rule" warning is harmless and silenced in
+   .vscode/settings.json. */
+@theme {
+  /* Main ivory — softens every `white` on the site (backgrounds, nav, cards) */
+  --color-white: #fbf6ec;
+  /* Slightly lighter surface for elevated elements (modals, cards) — never
+     use pure #fff beside the ivory */
+  --color-paper: #fffcf7;
+  /* Near-black primary text */
+  --color-black: #11110f;
+  --color-cream: #ffeac9;
+  /* Default section background on load — the bottom-left colour wheel
+     overrides this live (blush #fbe8e3 is still available via the wheel) */
+  --color-blush: #ffffff;
+  --color-matcha: #519c61;
+  --color-sage: #8eb691;
+  --color-latte: #a98a68;
+  --color-forest: #23492b;
+
+  --font-serif: "Instrument Serif", ui-serif, Georgia, serif;
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  /* Hand-lettered display face matching the logo's marker-drawn wordmark */
+  --font-hand: "Shantell Sans", "Manrope", ui-sans-serif, system-ui, sans-serif;
+
+  --ease-lux: cubic-bezier(0.32, 0.72, 0, 1);
+
+  --animate-breathe: breathe 4s ease-in-out infinite;
+  /* Calm entrance for the selected-event stage in the Schedule section */
+  --animate-stage: stage-in 0.45s var(--ease-lux) both;
+
+  @keyframes stage-in {
+    from {
+      opacity: 0;
+      transform: translateY(1rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes breathe {
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.08);
+      opacity: 0.65;
+    }
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+  /* Anchor jumps land below the fixed nav bar */
+  scroll-padding-top: 5rem;
+}
+
+body {
+  background-color: var(--color-matcha);
+  font-family: var(--font-sans);
+  color: var(--color-black);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: var(--color-matcha);
+  color: var(--color-cream);
+}
+
+/* Scroll-reveal base state — resolved by .is-visible via IntersectionObserver */
+.reveal {
+  opacity: 0;
+  transform: translateY(3.5rem);
+  filter: blur(6px);
+  transition:
+    opacity 0.9s var(--ease-lux),
+    transform 0.9s var(--ease-lux),
+    filter 0.9s var(--ease-lux);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition: none;
+  }
+}

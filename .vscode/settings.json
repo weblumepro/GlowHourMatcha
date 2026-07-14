@@ -1,0 +1,10 @@
+{
+  // Show inline color swatches (hover them for the visual color picker)
+  "editor.colorDecorators": true,
+  "editor.colorDecoratorsLimit": 500,
+  // Tailwind CSS IntelliSense has its own toggle for the same feature
+  "tailwindCSS.colorDecorators": true,
+  // Tailwind v4 uses @theme/@apply etc. — stop the built-in CSS validator
+  // from flagging them as unknown (the Tailwind extension understands them)
+  "css.lint.unknownAtRules": "ignore"
+}
