@@ -12,10 +12,10 @@
   --color-paper: #fffcf7;
   /* Near-black primary text */
   --color-black: #11110f;
-  --color-cream: #ffeac9;
+  --color-cream: #f5e6d8;
   /* Default section background on load — the bottom-left colour wheel
      overrides this live (blush #fbe8e3 is still available via the wheel) */
-  --color-blush: #ffffff;
+  --color-blush: #f5e6d8;
   --color-matcha: #519c61;
   --color-sage: #8eb691;
   --color-latte: #a98a68;

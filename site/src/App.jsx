@@ -1568,7 +1568,7 @@ function Glow({ className, color, always = false }) {
 const BG_PRESETS = [
   { name: 'White', value: '#ffffff' },
   { name: 'Ivory', value: '#fbf6ec' },
-  { name: 'Cream', value: '#ffeac9' },
+  { name: 'Cream', value: '#f5e6d8' },
   { name: 'Blush', value: '#fbe8e3' },
   { name: 'Sage', value: '#8eb691' },
   { name: 'Matcha', value: '#519c61' },
@@ -1581,7 +1581,7 @@ const BG_PRESETS = [
    picker, and the current hex code. */
 function ColorWheel() {
   const [open, setOpen] = useState(false)
-  const [color, setColor] = useState('#ffffff')
+  const [color, setColor] = useState('#f5e6d8')
   const rootRef = useRef(null)
 
   useEffect(() => {
