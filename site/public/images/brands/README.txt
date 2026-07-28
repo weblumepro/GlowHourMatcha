@@ -1,1 +1,1 @@
-﻿Drop collab photos here named by slug, e.g. nextdoor-market.jpg, playground-pilates.jpg - see BRAND_TILES in src/App.jsx for the full list. Tiles show the photo automatically; missing photos show a quiet hatched placeholder.
+﻿Drop collab photos here named by slug, e.g. nextdoor-market.png, playground-pilates.png - see BRAND_TILES in src/App.jsx for the full list. Tiles show the photo automatically; missing photos show a quiet hatched placeholder.

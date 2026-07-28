@@ -934,92 +934,48 @@ const MENU = [
   {
     number: '01',
     tag: 'Matcha',
-    title: 'Matcha Signature Drinks',
-    items: ['Ube Matcha', 'Coconut Cloud Matcha', 'Tokyo Fog Matcha', 'Banana Bread Matcha'],
-    images: {
-      ingredients: '/images/menu/matcha-ingredients.jpg',
-      ingredientsAlt: 'Matcha powder and ingredients used in our matcha signature drinks',
-      drink: '/images/menu/matcha-drink.jpg',
-      drinkAlt: 'A finished Glow Hour matcha signature drink',
-    },
+    image: '/images/menu/matcha.jpg',
+    imageAlt: 'Matcha Signature Drinks menu card',
   },
   {
     number: '02',
     tag: 'Specialty',
-    title: 'Specialty Matcha Drinks',
-    items: ['Mango Coconut Matcha', 'Lychee Matcha', 'Jasmine Matcha', 'Blueberry Matcha'],
-    images: {
-      ingredients: '/images/menu/specialty-ingredients.jpg',
-      ingredientsAlt: 'Fruit and ingredients used in our specialty matcha drinks',
-      drink: '/images/menu/specialty-drink.jpg',
-      drinkAlt: 'A finished Glow Hour specialty matcha drink',
-    },
+    image: '/images/menu/specialty.jpg',
+    imageAlt: 'Specialty Matcha Drinks menu card',
   },
   {
     number: '03',
     tag: 'Viet Coffee',
-    title: 'Vietnamese Iced Coffee Drinks',
-    items: [
-      'Signature Viet Coffee',
-      'Ube Viet Coffee',
-      'Salted Cold Foam Viet Coffee',
-      'Coconut Cold Foam Viet Coffee',
-    ],
-    images: {
-      ingredients: '/images/menu/coffee-ingredients.jpg',
-      ingredientsAlt: 'Coffee beans and ingredients used in our Vietnamese iced coffee drinks',
-      drink: '/images/menu/coffee-drink.jpg',
-      drinkAlt: 'A finished Glow Hour Vietnamese iced coffee drink',
-    },
+    image: '/images/menu/coffee.jpg',
+    imageAlt: 'Vietnamese Iced Coffee Drinks menu card',
   },
 ]
 
-/* One menu category: an image pair (ingredients ⇄ finished drink) above the
-   text. Desktop crossfades to the finished drink on hover; mobile shows the
-   finished drink and switches via a real toggle button. Falls back to a quiet
-   hatched placeholder until the photos exist in /images/menu/. */
+/* One menu category: a single full menu-card image (drink names and
+   descriptions are already baked into the artwork). Falls back to a quiet
+   hatched placeholder until the photo exists in /images/menu/. */
 function MenuCategory({ cat, delay }) {
-  // Mobile toggle — false shows the finished drink (the mobile default)
-  const [showIngredients, setShowIngredients] = useState(false)
   const [imgOk, setImgOk] = useState(true)
-
-  const imgClass =
-    'absolute inset-0 h-full w-full object-cover transition-[opacity,transform] duration-350 ease-in-out motion-reduce:transition-none lg:group-hover:scale-[1.02]'
 
   return (
     <Reveal delay={delay}>
-      <div className="group relative aspect-square w-full overflow-hidden">
+      <div className="relative aspect-640/910 w-full overflow-hidden">
         {imgOk ? (
-          <>
-            <img
-              src={cat.images.ingredients}
-              alt={cat.images.ingredientsAlt}
-              loading="lazy"
-              onError={() => setImgOk(false)}
-              className={`${imgClass} lg:opacity-100 lg:group-hover:opacity-0 ${
-                showIngredients ? 'opacity-100' : 'opacity-0'
-              }`}
-            />
-            <img
-              src={cat.images.drink}
-              alt={cat.images.drinkAlt}
-              loading="lazy"
-              onError={() => setImgOk(false)}
-              className={`${imgClass} lg:opacity-0 lg:group-hover:opacity-100 ${
-                showIngredients ? 'opacity-0' : 'opacity-100'
-              }`}
-            />
-          </>
+          <img
+            src={cat.image}
+            alt={cat.imageAlt}
+            loading="lazy"
+            onError={() => setImgOk(false)}
+            className="h-full w-full object-cover"
+          />
         ) : (
-          /* Obvious placeholder frame until the two photos are added */
+          /* Obvious placeholder frame until the photo is added */
           <div className="flex h-full w-full flex-col items-center justify-center gap-3 border border-dashed border-sage/70 bg-[repeating-linear-gradient(135deg,rgba(142,182,145,0.10)_0px,rgba(142,182,145,0.10)_1px,transparent_1px,transparent_9px)] px-6 text-center">
             <span className="text-[11px] font-semibold uppercase tracking-[0.25em] text-matcha">
-              {cat.tag} photos go here
+              {cat.tag} photo goes here
             </span>
             <span className="font-sans text-[12px] leading-relaxed text-black/55">
-              {cat.images.ingredients.split('/').pop()}
-              <br />
-              {cat.images.drink.split('/').pop()}
+              {cat.image.split('/').pop()}
             </span>
             <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-black/40">
               in /public/images/menu/
@@ -1027,32 +983,6 @@ function MenuCategory({ cat, delay }) {
           </div>
         )}
       </div>
-
-      {/* Mobile-only image switch */}
-      {imgOk && (
-        <button
-          type="button"
-          onClick={() => setShowIngredients((v) => !v)}
-          aria-pressed={showIngredients}
-          className="mt-4 inline-flex min-h-11 cursor-pointer items-center gap-2 text-[11px] font-medium uppercase tracking-[0.22em] text-forest focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-matcha lg:hidden"
-        >
-          {showIngredients ? 'View finished drink' : 'View ingredients'}
-        </button>
-      )}
-
-      <p className="mt-6 text-[13px] font-medium uppercase tracking-[0.25em] text-matcha">
-        {cat.number}&ensp;—&ensp;{cat.tag}
-      </p>
-      <h3 className="mt-3 font-serif text-[26px] leading-snug font-normal tracking-tight text-black md:text-[28px]">
-        {cat.title}
-      </h3>
-      <ul className="mt-6 flex flex-col gap-3">
-        {cat.items.map((item) => (
-          <li key={item} className="font-sans text-[15px] text-black/85">
-            {item}
-          </li>
-        ))}
-      </ul>
     </Reveal>
   )
 }
@@ -1093,45 +1023,53 @@ function Menu() {
 }
 
 const BRAND_TILES = [
-  { name: 'The Playground Pilates Collective', slug: 'playground-pilates' },
-  { name: 'Hailey Jane Jewellery', slug: 'hailey-jane' },
-  { name: 'Parle Viet Fresh', slug: 'parle-viet' },
-  { name: 'Oh So Good', slug: 'oh-so-good' },
-  { name: "Baked at Tiffany's", slug: 'baked-at-tiffanys' },
-  { name: 'uOttawa Filipino Student Association', slug: 'uottawa-fsa' },
-  { name: 'NextDoor Ottawa Market', slug: 'nextdoor-market' },
-  { name: 'DistillerSR', slug: 'distillersr' },
-  { name: 'KoW Connected', slug: 'kow-connected' },
-  { name: 'Wild Flower Sketch Club', slug: 'wild-flower-sketch' },
-  { name: 'Richcraft Rentals', slug: 'richcraft-rentals' },
+  { name: 'The Playground Pilates Collective', slug: 'playground-pilates', url: 'https://theplaygroundpilatescollective.com' },
+  { name: 'Hailey Jane Jewellery', slug: 'hailey-jane', url: 'https://haileyjane.ca' },
+  { name: 'Parle Viet Fresh', slug: 'parle-viet', url: 'https://instagram.com/vietfreshcanada' },
+  { name: 'Oh So Good', slug: 'oh-so-good', url: 'https://ohsogood.ca' },
+  { name: "Baked at Tiffany's", slug: 'baked-at-tiffanys', url: 'https://bakedattiffanys.ca' },
+  { name: 'uOttawa Filipino Student Association', slug: 'uottawa-fsa', url: 'https://instagram.com/filsa_uo' },
+  { name: 'NextDoor Ottawa Market', slug: 'nextdoor-market', url: 'https://nextdoorottawa.ca' },
+  { name: 'DistillerSR', slug: 'distillersr', url: 'https://distillersr.com' },
+  { name: 'KoW Connected', slug: 'kow-connected', url: 'https://kowconnected.ca' },
+  { name: 'Wild Flower Sketch Club', slug: 'wild-flower-sketch', url: 'https://instagram.com/wildflowersketchclub' },
+  { name: 'Richcraft Rentals', slug: 'richcraft-rentals', url: 'https://richcraftrentals.com' },
 ]
 
-/* Shows the collab photo when /images/brands/<slug>.jpg exists;
-   falls back to a quiet hatched placeholder until then. */
+/* Shows the collab logo when /images/brands/<slug>.png exists;
+   falls back to a quiet hatched placeholder until then. Links out to the
+   brand's site. */
 function BrandTile({ brand, delay }) {
   const [hasPhoto, setHasPhoto] = useState(true)
 
   return (
     <Reveal delay={delay}>
-      <div className="aspect-4/3 w-full overflow-hidden border border-sage/30">
-        {hasPhoto ? (
-          <img
-            src={`/images/brands/${brand.slug}.jpg`}
-            alt={brand.name}
-            loading="lazy"
-            onError={() => setHasPhoto(false)}
-            className="h-full w-full object-cover"
-          />
-        ) : (
-          <div
-            aria-hidden="true"
-            className="h-full w-full bg-[repeating-linear-gradient(135deg,rgba(142,182,145,0.16)_0px,rgba(142,182,145,0.16)_1px,transparent_1px,transparent_9px)]"
-          />
-        )}
-      </div>
-      <p className="mt-3 text-center font-sans text-[13px] leading-snug text-black/60">
-        {brand.name}
-      </p>
+      <a
+        href={brand.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="group block"
+      >
+        <div className="aspect-4/3 w-full overflow-hidden border border-sage/30">
+          {hasPhoto ? (
+            <img
+              src={`/images/brands/${brand.slug}.png`}
+              alt={brand.name}
+              loading="lazy"
+              onError={() => setHasPhoto(false)}
+              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            />
+          ) : (
+            <div
+              aria-hidden="true"
+              className="h-full w-full bg-[repeating-linear-gradient(135deg,rgba(142,182,145,0.16)_0px,rgba(142,182,145,0.16)_1px,transparent_1px,transparent_9px)]"
+            />
+          )}
+        </div>
+        <p className="mt-3 text-center font-sans text-[13px] leading-snug text-black/60 transition-colors group-hover:text-black">
+          {brand.name}
+        </p>
+      </a>
     </Reveal>
   )
 }

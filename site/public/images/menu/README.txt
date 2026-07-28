@@ -1,11 +1,9 @@
-Menu category images — drop the 6 photos here with these exact filenames:
+Menu category images — drop the 3 full menu-card photos here with these exact filenames:
 
-  matcha-ingredients.jpg      Matcha ingredients photo
-  matcha-drink.jpg            Matcha finished drink photo
-  specialty-ingredients.jpg   Specialty ingredients photo
-  specialty-drink.jpg         Specialty finished drink photo
-  coffee-ingredients.jpg      Vietnamese coffee ingredients photo
-  coffee-drink.jpg            Vietnamese coffee finished drink photo
+  matcha.jpg      Matcha Signature Drinks menu card
+  specialty.jpg   Specialty Matcha Drinks menu card
+  coffee.jpg      Vietnamese Iced Coffee Drinks menu card
 
-The Menu section shows a hatched placeholder until a pair exists.
-Square images (1:1-ish) crop best — the containers use object-fit: cover.
+The Menu section shows a hatched placeholder until a photo exists.
+Each card is a full designed graphic (drink names + descriptions baked in) —
+portrait ~640x1138, containers use object-fit: cover at that same ratio.
