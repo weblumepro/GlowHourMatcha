@@ -48,6 +48,109 @@ function Reveal({ as: Tag = 'div', delay = 0, className = '', children }) {
   )
 }
 
+// Scroll position of an element, as a percentage where the bottom of the
+// viewport is 0% and the top of the viewport is 100% — tracks the element's
+// vertical center as it travels up the screen while the page scrolls down.
+function viewportPercent(el) {
+  const rect = el.getBoundingClientRect()
+  const center = rect.top + rect.height / 2
+  return ((window.innerHeight - center) / window.innerHeight) * 100
+}
+
+const FADE_IN_START = 10
+const FADE_IN_END = 15
+const FADE_OUT_START = 80
+const FADE_OUT_END = 90
+const SLIDE_PX = 64
+
+// 'left'/'right' slide along X, 'bottom'/'top' slide along Y — 'bottom' means
+// the element starts below its resting position and rises into place.
+function directionVector(direction) {
+  if (direction === 'left') return { axis: 'X', sign: -1 }
+  if (direction === 'right') return { axis: 'X', sign: 1 }
+  if (direction === 'bottom') return { axis: 'Y', sign: 1 }
+  if (direction === 'top') return { axis: 'Y', sign: -1 }
+  return null
+}
+
+function scrollFadeStyle(percent, enterFrom, exitTo) {
+  let opacity
+  if (percent <= FADE_IN_START) opacity = 0
+  else if (percent < FADE_IN_END) opacity = (percent - FADE_IN_START) / (FADE_IN_END - FADE_IN_START)
+  else if (percent < FADE_OUT_START) opacity = 1
+  else if (percent < FADE_OUT_END) opacity = 1 - (percent - FADE_OUT_START) / (FADE_OUT_END - FADE_OUT_START)
+  else opacity = 0
+
+  let vector = null
+  if (percent <= FADE_IN_END) vector = directionVector(enterFrom)
+  else if (percent >= FADE_OUT_START) vector = directionVector(exitTo)
+
+  if (!vector) return { opacity, transform: 'none' }
+  const shiftPx = (1 - opacity) * vector.sign * SLIDE_PX
+  return { opacity, transform: shiftPx ? `translate${vector.axis}(${shiftPx}px)` : 'none' }
+}
+
+/* Continuous, scroll-position-driven fade — unlike Reveal, this has no
+   "already shown" memory, so scrolling back up reverses it exactly. Fades in
+   while the element crosses 10-15% up the screen (bottom = 0%, top = 100%)
+   and fades out crossing 80-90%; `enterFrom`/`exitTo` ('left' | 'right' |
+   'bottom' | 'top' | 'none') set which way it slides during each of those two
+   windows. `delay` (ms) staggers a group of siblings crossing the same
+   threshold together, so they cascade in one after another. */
+function ScrollFade({
+  as: Tag = 'div',
+  className = '',
+  enterFrom = 'none',
+  exitTo = 'none',
+  delay = 0,
+  children,
+}) {
+  const ref = useRef(null)
+  const [style, setStyle] = useState({ opacity: 0, transform: 'none' })
+
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setStyle({ opacity: 1, transform: 'none' })
+      return
+    }
+    const el = ref.current
+    if (!el) return
+
+    let raf = null
+    const measure = () => {
+      raf = null
+      setStyle(scrollFadeStyle(viewportPercent(el), enterFrom, exitTo))
+    }
+    const onScroll = () => {
+      if (raf === null) raf = requestAnimationFrame(measure)
+    }
+
+    measure()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+      if (raf !== null) cancelAnimationFrame(raf)
+    }
+  }, [enterFrom, exitTo])
+
+  return (
+    <Tag
+      ref={ref}
+      className={className}
+      style={{
+        ...style,
+        transition: 'opacity 0.2s linear, transform 0.2s linear',
+        transitionDelay: `${delay}ms`,
+        willChange: 'opacity, transform',
+      }}
+    >
+      {children}
+    </Tag>
+  )
+}
+
 /* ---------- Shared bits ---------- */
 
 function ArrowCta({ href, children }) {
@@ -72,18 +175,6 @@ function FramedImage({ src, alt, className = '' }) {
     <div className={`overflow-hidden ${className}`}>
       <img src={src} alt={alt} className="h-full w-full object-cover" loading="lazy" />
     </div>
-  )
-}
-
-function SectionHeading({ title, titleClassName = '' }) {
-  return (
-    <Reveal>
-      <h2
-        className={`font-serif text-4xl leading-[1.05] font-normal tracking-tight md:text-6xl ${titleClassName}`}
-      >
-        {title}
-      </h2>
-    </Reveal>
   )
 }
 
@@ -411,7 +502,8 @@ function Hero({ onStory }) {
           loop
           muted
           playsInline
-          preload="metadata"
+          preload="auto"
+          fetchPriority="high"
           poster="/images/homepage.png"
           onError={() => setVideoOk(false)}
         />
@@ -559,17 +651,23 @@ function MeetUs() {
     // 5rem scroll padding
     <section id="meet" className="flex -scroll-mt-2.5 items-center bg-blush pt-28 pb-32 md:pb-36">
       <div className="mx-auto grid w-full max-w-7xl items-center gap-14 px-5 md:px-10 lg:grid-cols-12">
-        <Reveal className="lg:col-span-5">
+        <ScrollFade className="lg:col-span-5" exitTo="left">
           <FramedImage
             src="/images/meetus.png"
             alt="Judy whisking matcha in a pink chawan"
             className="mx-auto max-w-sm lg:max-w-none"
           />
-        </Reveal>
+        </ScrollFade>
 
         <div className="lg:col-span-6 lg:col-start-7">
-          <SectionHeading title={<>Meet <em>Judy</em></>} />
-          <Reveal delay={200}>
+          <ScrollFade
+            as="h2"
+            enterFrom="bottom"
+            className="font-serif text-4xl leading-[1.05] font-normal tracking-tight md:text-6xl"
+          >
+            Meet <em>Judy</em>
+          </ScrollFade>
+          <ScrollFade enterFrom="right" exitTo="right">
             <p className="mt-8 text-[15px] leading-relaxed text-black/70">
               Judy is a full-time student and the founder of Glow Hour Matcha. Ever
               since discovering matcha, she has always been incredibly particular
@@ -599,7 +697,7 @@ function MeetUs() {
               cup is crafted with intention, because great matcha should never be
               compromised.
             </p>
-          </Reveal>
+          </ScrollFade>
         </div>
       </div>
     </section>
@@ -608,15 +706,25 @@ function MeetUs() {
 
 // `time` and `location` show as labelled lines in the event details —
 // replace the TBA placeholders with the real details for each event.
+//
+// On hiatus for August — swap back in for September by restoring this list:
+// const EVENTS = [
+//   { date: 'Jul 09', name: 'DistillerSR Corporate', time: 'TBA', location: 'TBA' },
+//   { date: 'Jul 11–12', name: 'Next Door Market Pop Up', time: 'TBA', location: 'TBA' },
+//   { date: 'Jul 14', name: "Letasha's Goodies Pop Up", time: 'TBA', location: 'TBA' },
+//   { date: 'Jul 18', name: 'Pilates with Zeinab Private Event', time: 'TBA', location: 'TBA' },
+//   { date: 'Jul 19', name: "Letasha's Goodies Pop Up", time: 'TBA', location: 'TBA' },
+//   { date: 'Jul 20', name: "Letasha's Goodies Pop Up", time: 'TBA', location: 'TBA' },
+//   { date: 'Jul 21', name: "Letasha's Goodies Pop Up", time: 'TBA', location: 'TBA' },
+//   { date: 'Jul 22', name: "Letasha's Goodies Pop Up", time: 'TBA', location: 'TBA' },
+// ]
 const EVENTS = [
-  { date: 'Jul 09', name: 'DistillerSR Corporate', time: 'TBA', location: 'TBA' },
-  { date: 'Jul 11–12', name: 'Next Door Market Pop Up', time: 'TBA', location: 'TBA' },
-  { date: 'Jul 14', name: "Letasha's Goodies Pop Up", time: 'TBA', location: 'TBA' },
-  { date: 'Jul 18', name: 'Pilates with Zeinab Private Event', time: 'TBA', location: 'TBA' },
-  { date: 'Jul 19', name: "Letasha's Goodies Pop Up", time: 'TBA', location: 'TBA' },
-  { date: 'Jul 20', name: "Letasha's Goodies Pop Up", time: 'TBA', location: 'TBA' },
-  { date: 'Jul 21', name: "Letasha's Goodies Pop Up", time: 'TBA', location: 'TBA' },
-  { date: 'Jul 22', name: "Letasha's Goodies Pop Up", time: 'TBA', location: 'TBA' },
+  {
+    date: 'Aug',
+    name: 'No Events This Month',
+    type: 'On Hiatus',
+    details: "We're off the pop-up circuit for August — see you again in September!",
+  },
 ]
 
 /* Derives the display type from the event name — no invented data. */
@@ -692,7 +800,7 @@ function Schedule() {
                 isOpen ? 'mt-4 text-[14px]' : 'mt-6 text-[16px]'
               }`}
             >
-              Catch us at a pop-up or book us for your next event.
+              No events happening in August — we'll be back in September.
             </p>
           </Reveal>
         </div>
@@ -809,7 +917,7 @@ function Schedule() {
                 {eventDescriptionOf(selectedEvent)}
               </p>
               <p className="mt-6 text-[12px] font-medium uppercase tracking-[0.35em] text-matcha/80">
-                {eventTypeOf(selectedEvent.name)}
+                {selectedEvent.type || eventTypeOf(selectedEvent.name)}
               </p>
               {selectedEvent.time && (
                 <p className="mt-4 font-sans text-[15px] text-black/70">
@@ -892,7 +1000,7 @@ function Schedule() {
                           {eventDescriptionOf(event)}
                         </p>
                         <p className="mt-3 text-[11px] font-medium uppercase tracking-[0.25em] text-matcha/80">
-                          {eventTypeOf(event.name)}
+                          {event.type || eventTypeOf(event.name)}
                         </p>
                         {event.time && (
                           <p className="mt-2 font-sans text-[14px] text-black/70">
@@ -958,7 +1066,7 @@ function MenuCategory({ cat, delay }) {
   const [imgOk, setImgOk] = useState(true)
 
   return (
-    <Reveal delay={delay}>
+    <ScrollFade enterFrom="bottom" delay={delay}>
       <div className="relative aspect-640/910 w-full overflow-hidden">
         {imgOk ? (
           <img
@@ -983,7 +1091,7 @@ function MenuCategory({ cat, delay }) {
           </div>
         )}
       </div>
-    </Reveal>
+    </ScrollFade>
   )
 }
 
@@ -1034,6 +1142,7 @@ const BRAND_TILES = [
   { name: 'KoW Connected', slug: 'kow-connected', url: 'https://kowconnected.ca' },
   { name: 'Wild Flower Sketch Club', slug: 'wild-flower-sketch', url: 'https://instagram.com/wildflowersketchclub' },
   { name: 'Richcraft Rentals', slug: 'richcraft-rentals', url: 'https://richcraftrentals.com' },
+  { name: 'Spoon Mii', slug: 'spoon-mii', url: 'https://www.instagram.com/spoon.mii/?hl=en' },
 ]
 
 /* Shows the collab logo when /images/brands/<slug>.png exists;
@@ -1050,14 +1159,16 @@ function BrandTile({ brand, delay }) {
         rel="noopener noreferrer"
         className="group block"
       >
-        <div className="aspect-4/3 w-full overflow-hidden border border-sage/30">
+        <div
+          className={`aspect-4/3 w-full overflow-hidden border border-sage/30 ${['playground-pilates', 'spoon-mii', 'distillersr'].includes(brand.slug) ? 'bg-white' : ''}`}
+        >
           {hasPhoto ? (
             <img
               src={`/images/brands/${brand.slug}.png`}
               alt={brand.name}
               loading="lazy"
               onError={() => setHasPhoto(false)}
-              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+              className={`h-full w-full transition-transform duration-300 group-hover:scale-105 ${['spoon-mii', 'distillersr'].includes(brand.slug) ? 'object-contain p-4' : 'object-cover'}`}
             />
           ) : (
             <div
