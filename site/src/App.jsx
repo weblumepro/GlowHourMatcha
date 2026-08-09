@@ -194,20 +194,11 @@ const iconProps = {
   'aria-hidden': true,
 }
 
-function ContactIcon() {
+function ContactIcon({ className = iconProps.className } = {}) {
   return (
-    <svg {...iconProps}>
+    <svg {...iconProps} className={className}>
       <rect x="3.5" y="5.5" width="17" height="13" rx="2" />
       <path d="m4.5 7.5 7.5 5.5 7.5-5.5" />
-    </svg>
-  )
-}
-
-function ShopIcon() {
-  return (
-    <svg {...iconProps}>
-      <path d="M6.5 8.5h11l-.85 10.6a1 1 0 0 1-1 .9h-7.3a1 1 0 0 1-1-.9L6.5 8.5Z" />
-      <path d="M9.25 8.25V6.75a2.75 2.75 0 0 1 5.5 0v1.5" />
     </svg>
   )
 }
@@ -223,7 +214,6 @@ function ProfileIcon() {
 
 const ICON_LINKS = [
   { label: 'Contact', href: '#contact', Icon: ContactIcon },
-  { label: 'Shop', href: '#shop', Icon: ShopIcon },
   { label: 'Meet Us', href: '#meet', Icon: ProfileIcon },
 ]
 
@@ -386,23 +376,28 @@ function Nav({ onStory }) {
             )}
           </a>
 
-          {/* Right: contact / shop / profile icons */}
+          {/* Right: contact / profile icons, plus Instagram */}
           <div className="flex items-center justify-end gap-1">
-            {ICON_LINKS.map(({ label, href, Icon }) => (
-              <a
-                key={href}
-                href={href}
-                aria-label={label}
-                title={label}
-                className={`flex h-10 w-10 items-center justify-center rounded-full transition-all duration-500 ease-lux ${
-                  light
-                    ? 'text-cream/90 hover:bg-cream/15 hover:text-cream'
-                    : 'text-[#355440] hover:bg-forest/10 hover:text-forest'
-                }`}
-              >
-                <Icon />
-              </a>
-            ))}
+            {[...ICON_LINKS, ...SOCIAL_LINKS.filter((s) => s.label === 'Instagram')].map(
+              ({ label, href, Icon }) => (
+                <a
+                  key={href}
+                  href={href}
+                  aria-label={label}
+                  title={label}
+                  {...(href.startsWith('http')
+                    ? { target: '_blank', rel: 'noopener noreferrer' }
+                    : {})}
+                  className={`flex h-10 w-10 items-center justify-center rounded-full transition-all duration-500 ease-lux ${
+                    light
+                      ? 'text-cream/90 hover:bg-cream/15 hover:text-cream'
+                      : 'text-[#355440] hover:bg-forest/10 hover:text-forest'
+                  }`}
+                >
+                  <Icon />
+                </a>
+              ),
+            )}
           </div>
         </header>
       </div>
@@ -508,9 +503,6 @@ function Hero({ onStory }) {
           onError={() => setVideoOk(false)}
         />
       )}
-
-      {/* Darkening overlay for text contrast */}
-      <div className="absolute inset-0 bg-black/30" aria-hidden="true" />
 
       {/* Centered heading, fades in on load and fades out near the nav on scroll */}
       <div ref={fadeRef} className="relative z-10">
@@ -1487,9 +1479,9 @@ function Shop() {
   )
 }
 
-function InstagramIcon() {
+function InstagramIcon({ className = iconProps.className } = {}) {
   return (
-    <svg {...iconProps}>
+    <svg {...iconProps} className={className}>
       <rect x="3.5" y="3.5" width="17" height="17" rx="4.5" />
       <circle cx="12" cy="12" r="3.8" />
       <circle cx="16.9" cy="7.1" r="0.4" fill="currentColor" />
@@ -1497,9 +1489,9 @@ function InstagramIcon() {
   )
 }
 
-function TikTokIcon() {
+function TikTokIcon({ className = iconProps.className } = {}) {
   return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="h-4.5 w-4.5" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
       <path d="M12.53.02C13.84 0 15.14.01 16.44 0c.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" />
     </svg>
   )
@@ -1539,7 +1531,27 @@ function Footer({ onStory }) {
               An AAPI women-owned matcha bar bringing quality, intention, and
               community to Ottawa — one cup at a time.
             </p>
-            <div className="mt-6 flex items-center gap-3">
+          </div>
+          <div className="flex flex-col items-start gap-6 md:items-end">
+            <nav className="flex flex-wrap gap-x-6 gap-y-2 md:justify-end">
+              <button
+                type="button"
+                onClick={onStory}
+                className="cursor-pointer text-sm text-black/60 transition-colors duration-500 ease-lux hover:text-matcha"
+              >
+                Our Story
+              </button>
+              {NAV_LINKS.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className="text-sm text-black/60 transition-colors duration-500 ease-lux hover:text-matcha"
+                >
+                  {link.label}
+                </a>
+              ))}
+            </nav>
+            <div className="flex items-center gap-4">
               {SOCIAL_LINKS.map(({ label, href, Icon }) => (
                 <a
                   key={label}
@@ -1548,39 +1560,29 @@ function Footer({ onStory }) {
                   {...(href.startsWith('http')
                     ? { target: '_blank', rel: 'noopener noreferrer' }
                     : {})}
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-sage/50 text-black/60 transition-colors duration-500 ease-lux hover:border-matcha hover:text-matcha"
+                  className="flex h-14 w-14 items-center justify-center rounded-full border border-sage/50 text-black/70 transition-all duration-500 ease-lux hover:scale-110 hover:border-matcha hover:text-matcha"
                 >
-                  <Icon />
+                  <Icon className="h-6.5 w-6.5" />
                 </a>
               ))}
             </div>
           </div>
-          <nav className="flex flex-wrap gap-x-6 gap-y-2">
-            <button
-              type="button"
-              onClick={onStory}
-              className="cursor-pointer text-sm text-black/60 transition-colors duration-500 ease-lux hover:text-matcha"
-            >
-              Our Story
-            </button>
-            {NAV_LINKS.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className="text-sm text-black/60 transition-colors duration-500 ease-lux hover:text-matcha"
-              >
-                {link.label}
-              </a>
-            ))}
-          </nav>
         </div>
         <div className="mt-16 flex flex-col justify-between gap-3 border-t border-sage/40 pt-8 text-xs text-black/50 md:flex-row">
           <span>© {new Date().getFullYear()} Glow Hour Matcha · Ottawa, Canada</span>
           <span>Founded on community, culture &amp; tradition</span>
           <span>
+            <a
+              href="/terms.html"
+              className="underline underline-offset-2 transition-colors duration-500 ease-lux hover:text-matcha"
+            >
+              Terms of Service
+            </a>
+          </span>
+          <span>
             Powered by{' '}
             <a
-              href="https://weblume.com"
+              href="https://weblume.ca"
               target="_blank"
               rel="noopener noreferrer"
               className="underline underline-offset-2 transition-colors duration-500 ease-lux hover:text-matcha"
@@ -1613,127 +1615,6 @@ function Glow({ className, color, always = false }) {
   )
 }
 
-/* Curated backgrounds shown as one-tap swatches — the brand palette */
-const BG_PRESETS = [
-  { name: 'White', value: '#ffffff' },
-  { name: 'Ivory', value: '#fbf6ec' },
-  { name: 'Cream', value: '#f5e6d8' },
-  { name: 'Blush', value: '#fbe8e3' },
-  { name: 'Sage', value: '#8eb691' },
-  { name: 'Matcha', value: '#519c61' },
-]
-
-/* Bottom-left colour picker — live-edits the section background. Every
-   section uses `bg-blush`, which resolves to var(--color-blush), so
-   overriding that variable on <html> recolours them all at once. The rainbow
-   swatch toggles a popover with named brand-palette swatches, a custom
-   picker, and the current hex code. */
-function ColorWheel() {
-  const [open, setOpen] = useState(false)
-  const [color, setColor] = useState('#f5e6d8')
-  const rootRef = useRef(null)
-
-  useEffect(() => {
-    document.documentElement.style.setProperty('--color-blush', color)
-  }, [color])
-
-  // Close the popover on outside click or Escape
-  useEffect(() => {
-    if (!open) return
-    const onDown = (e) => {
-      if (!rootRef.current?.contains(e.target)) setOpen(false)
-    }
-    const onKey = (e) => {
-      if (e.key === 'Escape') setOpen(false)
-    }
-    window.addEventListener('pointerdown', onDown)
-    window.addEventListener('keydown', onKey)
-    return () => {
-      window.removeEventListener('pointerdown', onDown)
-      window.removeEventListener('keydown', onKey)
-    }
-  }, [open])
-
-  return (
-    <div ref={rootRef} className="fixed bottom-5 left-5 z-50">
-      {open && (
-        <div className="absolute bottom-16 left-0 w-64 rounded-2xl border border-sage/40 bg-white p-5 shadow-[0_20px_60px_-20px_rgba(17,17,15,0.35)]">
-          <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-forest/80">
-            Background
-          </p>
-          <div className="mt-4 grid grid-cols-3 gap-x-2 gap-y-3">
-            {BG_PRESETS.map((preset) => (
-              <button
-                key={preset.value}
-                type="button"
-                onClick={() => setColor(preset.value)}
-                aria-pressed={color === preset.value}
-                className="group flex cursor-pointer flex-col items-center gap-1.5"
-              >
-                <span
-                  aria-hidden="true"
-                  className={`h-9 w-9 rounded-full border border-black/10 transition-all duration-300 ease-lux group-hover:scale-110 ${
-                    color === preset.value ? 'ring-2 ring-matcha ring-offset-2' : ''
-                  }`}
-                  style={{ backgroundColor: preset.value }}
-                />
-                <span className="text-[10px] font-medium tracking-[0.08em] text-black/60 uppercase">
-                  {preset.name}
-                </span>
-              </button>
-            ))}
-          </div>
-
-          {/* Anything-goes fallback — opens the browser's colour picker */}
-          <label className="mt-5 flex cursor-pointer items-center gap-3 rounded-xl border border-sage/40 px-3 py-2.5 transition-colors duration-300 ease-lux hover:border-matcha">
-            <span
-              aria-hidden="true"
-              className="h-6 w-6 shrink-0 rounded-full border border-black/10"
-              style={{
-                background:
-                  'conic-gradient(#f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00)',
-              }}
-            />
-            <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-black/70">
-              Custom colour…
-            </span>
-            <input
-              type="color"
-              value={color}
-              onChange={(e) => setColor(e.target.value)}
-              aria-label="Pick a custom background colour"
-              className="h-0 w-0 opacity-0"
-            />
-          </label>
-
-          <p className="mt-4 text-center font-sans text-[13px] font-semibold tracking-[0.12em] text-black/70 uppercase">
-            {color}
-          </p>
-        </div>
-      )}
-
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        aria-expanded={open}
-        aria-label="Change section background colour"
-        title="Change background colour"
-        className="block h-12 w-12 cursor-pointer rounded-full p-1.25 shadow-[0_8px_30px_-12px_rgba(17,17,15,0.35)] transition-transform duration-500 ease-lux hover:scale-110"
-        style={{
-          background: 'conic-gradient(#f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00)',
-        }}
-      >
-        {/* Centre swatch shows the currently selected colour */}
-        <span
-          aria-hidden="true"
-          className="block h-full w-full rounded-full border border-black/10"
-          style={{ backgroundColor: color }}
-        />
-      </button>
-    </div>
-  )
-}
-
 /* ---------- App ---------- */
 
 function App() {
@@ -1754,7 +1635,6 @@ function App() {
       </main>
       <Footer onStory={openStory} />
       <StoryModal open={storyOpen} onClose={() => setStoryOpen(false)} />
-      <ColorWheel />
     </div>
   )
 }
