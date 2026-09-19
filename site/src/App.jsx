@@ -491,7 +491,7 @@ function Hero({ onStory }) {
           seam baked into the file (see public/videos/README.txt). */}
       {videoOk && (
         <video
-          src="/videos/hero-slow.mp4"
+          src="/videos/heroVideo-loop.mp4"
           className="absolute inset-0 h-full w-full object-cover"
           autoPlay
           loop
@@ -698,24 +698,20 @@ function MeetUs() {
 
 // `time` and `location` show as labelled lines in the event details —
 // replace the TBA placeholders with the real details for each event.
-//
-// On hiatus for August — swap back in for September by restoring this list:
-// const EVENTS = [
-//   { date: 'Jul 09', name: 'DistillerSR Corporate', time: 'TBA', location: 'TBA' },
-//   { date: 'Jul 11–12', name: 'Next Door Market Pop Up', time: 'TBA', location: 'TBA' },
-//   { date: 'Jul 14', name: "Letasha's Goodies Pop Up", time: 'TBA', location: 'TBA' },
-//   { date: 'Jul 18', name: 'Pilates with Zeinab Private Event', time: 'TBA', location: 'TBA' },
-//   { date: 'Jul 19', name: "Letasha's Goodies Pop Up", time: 'TBA', location: 'TBA' },
-//   { date: 'Jul 20', name: "Letasha's Goodies Pop Up", time: 'TBA', location: 'TBA' },
-//   { date: 'Jul 21', name: "Letasha's Goodies Pop Up", time: 'TBA', location: 'TBA' },
-//   { date: 'Jul 22', name: "Letasha's Goodies Pop Up", time: 'TBA', location: 'TBA' },
-// ]
 const EVENTS = [
   {
-    date: 'Aug',
-    name: 'No Events This Month',
-    type: 'On Hiatus',
-    details: "We're off the pop-up circuit for August — see you again in September!",
+    date: 'Sep 26',
+    name: "Refined Image's Grand Opening Event",
+    time: '12pm – 2pm',
+    details:
+      "Join Glow Hour Matcha at Refined Image's Grand Opening Event for our signature matcha and Vietnamese coffee drinks.",
+  },
+  {
+    date: 'Sep 27',
+    name: 'Matcha Pop Up Collab with SpoonMii',
+    time: '12pm – 7pm',
+    details:
+      'A matcha pop-up collab with SpoonMii, featuring our signature matcha and Vietnamese coffee drinks.',
   },
 ]
 
@@ -728,7 +724,7 @@ function eventTypeOf(name) {
 
 /* "Jul 09" → "July 09" for display; the underlying data is unchanged. */
 function displayDate(date) {
-  return date.replace(/^Jul\b/, 'July')
+  return date.replace(/^Jul\b/, 'July').replace(/^Sep\b/, 'September')
 }
 
 /* Short, factual description assembled from the event's own name when no
@@ -792,7 +788,7 @@ function Schedule() {
                 isOpen ? 'mt-4 text-[14px]' : 'mt-6 text-[16px]'
               }`}
             >
-              No events happening in August — we'll be back in September.
+              Catch us at a pop-up or book us for your next event.
             </p>
           </Reveal>
         </div>
