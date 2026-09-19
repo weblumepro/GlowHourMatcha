@@ -478,17 +478,9 @@ function Hero({ onStory }) {
       id="top"
       className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden bg-black"
     >
-      {/* Poster fallback — shows until the hero video exists/loads */}
-      <img
-        src="/images/homepage.png"
-        alt=""
-        aria-hidden="true"
-        className="absolute inset-0 h-full w-full object-cover"
-        fetchPriority="high"
-      />
-
       {/* Full-bleed autoplay video, sorate.co style, with a crossfaded loop
-          seam baked into the file (see public/videos/README.txt). */}
+          seam baked into the file (see public/videos/README.txt). Falls back
+          to the section's black background until it's ready to paint. */}
       {videoOk && (
         <video
           src="/videos/heroVideo-loop.mp4"
@@ -499,7 +491,6 @@ function Hero({ onStory }) {
           playsInline
           preload="auto"
           fetchPriority="high"
-          poster="/images/homepage.png"
           onError={() => setVideoOk(false)}
         />
       )}
