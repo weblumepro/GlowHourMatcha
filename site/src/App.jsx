@@ -691,18 +691,19 @@ function MeetUs() {
 // replace the TBA placeholders with the real details for each event.
 const EVENTS = [
   {
-    date: 'Sep 26',
-    name: "Refined Image's Grand Opening Event",
-    time: '12pm – 2pm',
+    date: 'Oct 18',
+    name: 'Wellness Event with The Playground Pilates Collective',
+    type: 'Wellness Event',
+    time: '2pm – 4pm',
     details:
-      "Join Glow Hour Matcha at Refined Image's Grand Opening Event for our signature matcha and Vietnamese coffee drinks.",
+      'Join Glow Hour Matcha and The Playground Pilates Collective for a wellness event featuring our signature matcha and Vietnamese coffee drinks.',
   },
   {
-    date: 'Sep 27',
-    name: 'Matcha Pop Up Collab with SpoonMii',
-    time: '12pm – 7pm',
+    date: 'Oct 24',
+    name: 'Sketch and Stretch with Move Like You Studio & Wild Flower Sketch Club',
+    time: '11am – 1pm',
     details:
-      'A matcha pop-up collab with SpoonMii, featuring our signature matcha and Vietnamese coffee drinks.',
+      'Sketch and Stretch with Move Like You Studio and Wild Flower Sketch Club, featuring our signature matcha and Vietnamese coffee drinks.',
   },
 ]
 
@@ -715,7 +716,7 @@ function eventTypeOf(name) {
 
 /* "Jul 09" → "July 09" for display; the underlying data is unchanged. */
 function displayDate(date) {
-  return date.replace(/^Jul\b/, 'July').replace(/^Sep\b/, 'September')
+  return date.replace(/^Jul\b/, 'July').replace(/^Sep\b/, 'September').replace(/^Oct\b/, 'October')
 }
 
 /* Short, factual description assembled from the event's own name when no
