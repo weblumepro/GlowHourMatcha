@@ -1123,16 +1123,17 @@ const BRAND_TILES = [
   { name: 'Wild Flower Sketch Club', slug: 'wild-flower-sketch', url: 'https://instagram.com/wildflowersketchclub' },
   { name: 'Richcraft Rentals', slug: 'richcraft-rentals', url: 'https://richcraftrentals.com' },
   { name: 'Spoon Mii', slug: 'spoon-mii', url: 'https://www.instagram.com/spoon.mii/?hl=en' },
+  { name: 'Refined Image Ottawa', slug: 'refined-image', url: 'https://www.instagram.com/refinedimageottawa/' },
 ]
 
 /* Shows the collab logo when /images/brands/<slug>.png exists;
    falls back to a quiet hatched placeholder until then. Links out to the
    brand's site. */
-function BrandTile({ brand, delay }) {
+function BrandTile({ brand, delay, className }) {
   const [hasPhoto, setHasPhoto] = useState(true)
 
   return (
-    <Reveal delay={delay}>
+    <Reveal delay={delay} className={className}>
       <a
         href={brand.url}
         target="_blank"
@@ -1200,7 +1201,18 @@ function BrandGallery() {
           </Reveal>
           <div className="mt-10 grid grid-cols-2 gap-x-8 gap-y-10 md:grid-cols-4">
             {BRAND_TILES.map((brand, i) => (
-              <BrandTile key={brand.slug} brand={brand} delay={i * 60} />
+              <BrandTile
+                key={brand.slug}
+                brand={brand}
+                delay={i * 60}
+                // A lone tile on the last row sits centred, one column wide.
+                // The gap is 2rem, so one column is half of two minus 1rem.
+                className={
+                  i === BRAND_TILES.length - 1 && BRAND_TILES.length % 4 === 1
+                    ? 'col-span-2 mx-auto w-[calc(50%-1rem)] md:col-start-2'
+                    : undefined
+                }
+              />
             ))}
           </div>
         </div>
